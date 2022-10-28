@@ -1,19 +1,33 @@
 <app-button
-  color="{{ showAddTask ? 'red' : 'green' }}"
-  text="{{ showAddTask ? 'Close' : 'Add' }}"
+  [isPrimary]="!showAddTask"
+  [text]="showAddTask ? 'Close' : 'Add'"
   (btnClick)="toggleAddTask()"
 ></app-button>
-<form [formGroup]="sensorenDataForm" (ngSubmit)="onSubmit()" *ngIf="showAddTask">
-  <h2>Neuen Messwert hinzufügen</h2>
-    <select formControlName="sensorId">
-        <option value="" disabled>Bitte Sensor auswählen</option>
-        <option *ngFor="let item of storeService.sensoren" [ngValue]="item.id">{{item?.name}}</option>
-      </select>
-    <input placeholder="Datum" type="date" name="datum" formControlName="date">
-    <input placeholder="Temperatur" type="number" name="Temperatur" formControlName="temperature">
-    <input placeholder="Luftfeuchtigkeit" type="number" name="Luftfeutigkeit" formControlName="humidity">
+<div class="formWrapper">
+  <form [formGroup]="sensorenDataForm" (ngSubmit)="onSubmit()" *ngIf="showAddTask" class="inputForm">
+    <h2>Neuen Messwert hinzufügen</h2>
+    <mat-form-field appearance="fill">
+      <mat-label>Bitte Sensor auswählen</mat-label>
+      <mat-select formControlName="sensorId" required>
+        <mat-option *ngFor="let item of storeService.sensoren" [value]="item.id">{{item?.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Datum</mat-label>
+      <input matInput [matDatepicker]="picker" name="datum" formControlName="date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Temperatur" type="number" name="Temperatur" formControlName="temperature">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Luftfeuchtigkeit" type="number" name="Luftfeutigkeit" formControlName="humidity">
+    </mat-form-field>
 
-    <button class="btn btn-primary" type="submit">
+
+    <button mat-raised-button color="primary" class="btn btn-primary" type="submit">
       Erfassen
     </button>
-</form>
+  </form>
+</div>

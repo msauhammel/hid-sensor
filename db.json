@@ -43,20 +43,6 @@
       "id": 8
     },
     {
-      "sensorId": 3,
-      "temperature": 5,
-      "humidity": 47,
-      "date": "2022-03-17",
-      "id": 9
-    },
-    {
-      "sensorId": 2,
-      "temperature": 16,
-      "humidity": 44,
-      "date": "2022-12-15",
-      "id": 10
-    },
-    {
       "sensorId": 2,
       "temperature": 22,
       "humidity": 33,

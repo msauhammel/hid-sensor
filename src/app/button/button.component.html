@@ -1,5 +1,4 @@
-<button
-  [ngStyle]="{ 'background-color': color }"
+<button mat-raised-button [color]="isPrimary? 'primary':'accent'"
   class="btn"
   (click)="onClick()"
 >

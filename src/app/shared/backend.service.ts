@@ -1,17 +1,19 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { Sensor } from '../Sensor';
-import { Sensorendata } from '../Sensorendata';
-import { SensorendataResponse } from '../SensorendataResponse';
-import { StoreService } from './store.service';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {firstValueFrom} from 'rxjs';
+import {Sensor} from '../Sensor';
+import {Sensorendata} from '../Sensorendata';
+import {SensorendataResponse} from '../SensorendataResponse';
+import {StoreService} from './store.service';
+import {PagedSensorendata} from "../PagedSensorendata";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
 
-  constructor(private storeService: StoreService, private http: HttpClient) { }
+  constructor(private storeService: StoreService, private http: HttpClient) {
+  }
 
   sensoren: Sensor[] = [];
 
@@ -22,11 +24,21 @@ export class BackendService {
 
   public async getSensorenDaten() {
     const sensorenDataResponse = await firstValueFrom(this.http.get<SensorendataResponse[]>(`http://localhost:5000/sensorsData`));
-    const sensorenData: Sensorendata[]= sensorenDataResponse.map(data => {
+    const sensorenData: Sensorendata[] = sensorenDataResponse.map(data => {
       const sensor: Sensor = this.sensoren.filter(sensor => sensor.id == data.sensorId)[0];
-      return { ...data, sensor }
+      return {...data, sensor}
     });
     this.storeService.sensorenDaten = sensorenData;
+  }
+
+  public async getSensorenDatenPaged(page: number, sensorsPerPage: number): Promise<PagedSensorendata> {
+    const sensorenDataResponse = await firstValueFrom(this.http.get<any>(`http://localhost:5000/sensorsData?_page=${page}&_limit=${sensorsPerPage}`, { observe: 'response' }));
+    const sensorenDaten: Sensorendata[] = sensorenDataResponse.body.map((data: any) => {
+      const sensor: Sensor = this.sensoren.filter(sensor => sensor.id == data.sensorId)[0];
+      return {...data, sensor}
+    });
+    const length = Number(sensorenDataResponse.headers.get('X-Total-Count'));
+    return {sensorenDaten, length};
   }
 
   public async addSensorsData(sensorenData: Sensorendata[]) {
